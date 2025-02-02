@@ -24,8 +24,8 @@ do
         if[ "$j" == "$coinbase" ]
         then
             txf=$(echo $j)
-            break 2
         fi
+        break 2
     done
 done
 echo $txf
