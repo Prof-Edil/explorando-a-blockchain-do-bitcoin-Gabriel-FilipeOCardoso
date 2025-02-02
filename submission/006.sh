@@ -18,11 +18,12 @@ do
     vindet=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction $tx true | jq -r '.vin[]')
     for j in $(echo "$vindet" | jq -r '.txid')
     do
-        if[ $j == $coinbase ]
+        if [ $j == $coinbase ]
         then
             txf=$(echo $j)
+            break 2
         fi
-        break 2
     done
 done
+
 echo $txf
