@@ -9,7 +9,7 @@ do
     echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$bloco" | jq -r '.tx[]')
     tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
 
-    for vout in $(echo "$tx" | jq -r '.vout[] | .n')
+    for vout in $(echo $tx | jq -r '.vout[] | .n')
     do
         # Verifique se a saída foi gasta usando gettxout
         txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout "$txid" "$vout")
