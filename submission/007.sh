@@ -2,9 +2,27 @@
 
 blockhash=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblockhash 123321)
 
-txids=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$blockhash" | jq -r '.tx[]')
+bloco=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$blockhash")
 
-for txid in $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$blockhash" | jq -r '.tx[]')
+for txid in $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$bloco" | jq -r '.tx[]')
 do
-    echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true | jq -r '.vout | select(.spent==false) | .scriptPubKey.addresses[0]')
+    echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$bloco" | jq -r '.tx[]')
+    tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
+
+    for vout in $(echo "$tx" | jq -r '.vout[] | .n')
+    do
+        # Verifique se a saída foi gasta usando gettxout
+        txout=$(bitcoin-cli gettxout "$txid" "$vout")
+
+        # Se gettxout retornar null, a saída foi gasta
+        if [ $txout == null ] 
+        then
+            echo "Saída $vout da transação $txid FOI GASTA."
+        else
+            echo "Saída $vout da transação $txid NÃO FOI GASTA."
+            saidatx=$(echo $txid)
+        fi
+    done
 done
+
+echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$saidatx" true | jq -r '.vout[0].scriptPubKey.addresses[0]')
