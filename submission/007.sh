@@ -6,12 +6,5 @@ txids=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpasswo
 
 for txid in $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock "$blockhash" | jq -r '.tx[]')
 do
-    txdetail=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txids" true)
-    echo $txdetail | jq -c '.vout[]' | while read -r VOUT
-    do
-        if [ $(echo "$VOUT" | jq -r '.spent') == "false" ]; then
-            ADDRESS=$(echo "$VOUT" | jq -r '.scriptPubKey.addresses[0]')
-            echo "Address with unspent output: $ADDRESS"
-        fi
-    done
+    echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true | jq -r '.vout | select(.spent==false) | .scriptPubKey.addresses[0]')
 done
