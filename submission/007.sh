@@ -20,10 +20,10 @@ do
             echo "Saída $vout da transação $txid FOI GASTA."
         else
             echo "Saída $vout da transação $txid NÃO FOI GASTA."
-            saidatx=$(echo $txid)
+            saidatx=$(echo $vout)
             break 2
         fi
     done
 done
 
-echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$saidatx" true | jq -r '.vout[].scriptPubKey.addresses[]')
+echo $saidatx | jq -r '.vout[].scriptPubKey.addresses[]'
