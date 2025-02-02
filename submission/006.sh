@@ -20,10 +20,10 @@ do
     do
         if [ $j == $coinbase ]
         then
-            txf=$(echo $j)
+            txf=$(echo $bloco | jq -r '.tx[@]')
             break 2
         fi
     done
 done
 
-echo $txf
+echo $(echo $bloco | jq -r '.tx[@]')
