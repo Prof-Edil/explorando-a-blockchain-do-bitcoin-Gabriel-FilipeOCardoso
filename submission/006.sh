@@ -12,11 +12,8 @@ blockhash=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpa
 
 bloco=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock $blockhash)
 
-tx=$(echo $bloco | jq -r '.tx[]')
 
-txf=()
-
-for i in $tx
+for i in $$(echo $bloco | jq -r '.tx[@]')
 do 
     vindet=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction $tx true | jq -r '.vin[]')
     for j in $(echo "$vindet" | jq -r '.txid')
