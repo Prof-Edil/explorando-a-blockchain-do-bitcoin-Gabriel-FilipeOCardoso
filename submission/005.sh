@@ -19,7 +19,7 @@ multisig="1 $pubkey1 $pubkey2 $pubkey3 $pubkey4 4 OP_CKECKMULTISIG"
 
 hexd=$(echo -n "$multisig" | xxd -r -p | sha256sum | awk '{print $1}')
 
-hash=$(echo -n "$script_hex" | xxd -r -p | openssl rmd160 | awk '{print $2}')
+hash=$(echo -n "$hexd" | xxd -r -p | open ssl rmd160 | awk '{print $2}')
 
 prefix="05"
-address=$(echo -n "$prefix$hash" | xxd -r -p | base58 -c)
+address=$(echo -n "$prefix$hashf" | xxd -r -p | base58 -c)
