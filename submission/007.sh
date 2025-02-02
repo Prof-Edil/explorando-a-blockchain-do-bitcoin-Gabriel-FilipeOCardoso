@@ -21,8 +21,9 @@ do
         else
             echo "Saída $vout da transação $txid NÃO FOI GASTA."
             saidatx=$(echo $txid)
+            break 2
         fi
     done
 done
 
-echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$saidatx" true | jq -r '.vout[0].scriptPubKey.addresses[0]')
+echo $(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$saidatx" true | jq -r '.vout[].scriptPubKey.addresses[]')
