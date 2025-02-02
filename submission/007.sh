@@ -12,7 +12,7 @@ do
     for vout in $(echo "$tx" | jq -r '.vout[] | .n')
     do
         # Verifique se a saída foi gasta usando gettxout
-        txout=$(bitcoin-cli gettxout "$txid" "$vout")
+        txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout "$txid" "$vout")
 
         # Se gettxout retornar null, a saída foi gasta
         if [ $txout == null ] 
