@@ -1,27 +1,22 @@
 # Only one single output remains unspent from block 123,321. What address was it sent to?
 
-#!/bin/bash
 
-# Block height to check
-block_height=123321
+block=123321
 
-# Get the block hash
-block_hash=$(bitcoin-cli getblockhash $block_height)
+block_hash=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblockhash $block_height)
 
-# Get the block details
-block=$(bitcoin-cli getblock $block_hash)
+block=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock $block_hash)
 
 # Iterate over all transactions in the block
 for txid in $(echo "$block" | jq -r '.tx[]'); do
     echo "Checking transaction: $txid"
 
-    # Get the transaction details
-    tx=$(bitcoin-cli getrawtransaction "$txid" true)
+    tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
 
     # Iterate over all outputs (vout) in the transaction
     for vout in $(echo "$tx" | jq -r '.vout[] | .n'); do
         # Check if the output is unspent
-        txout=$(bitcoin-cli gettxout "$txid" "$vout")
+        txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout "$txid" "$vout")
 
         if [ "$txout" != "null" ]; then
             # Extract the address from the unspent output
@@ -29,7 +24,7 @@ for txid in $(echo "$block" | jq -r '.tx[]'); do
 
             echo "Unspent output found in transaction $txid, vout $vout."
             echo "Address: $address"
-            exit 0  # Exit after finding the unspent output
+            break 2
         fi
     done
 done
