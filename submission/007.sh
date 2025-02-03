@@ -20,7 +20,7 @@ do
         txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout $txid $i)
 
         # Se txout  (not null), então unspent output
-        if [[ "$txout" && "$txout" != "null" ]]
+        if [[ ! -z "$txout" ]]
         then
             # the address
             address=$(echo $txout | jq -r '.scriptPubKey.addresses')
