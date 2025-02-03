@@ -15,7 +15,7 @@ do
     tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
     vcont=$(echo "$tx" | jq '.vout | length')
 
-    for i in $vcont
+    for (( i=0; i<$vcont; i++ ))
     do
         txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout $txid $i)
 
