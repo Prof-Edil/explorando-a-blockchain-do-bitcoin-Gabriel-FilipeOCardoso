@@ -9,16 +9,15 @@ block_hash=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcp
 bloco=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock $block_hash)
 
 # todas as transações do bloco
-for txid in $(echo "$bloco" | jq -r '.tx[]') 
+for txid in $(echo $bloco | jq -r '.tx[]') 
 do
 
     tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
     vcont=$(echo "$tx" | jq '.vout | length')
 
-    
     for i in $vcont
     do
-        txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout "$txid" "$i")
+        txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout $txid $i)
 
         # Se txout  (not null), então unspent output
         if [[ "$txout" && "$txout" != "null" ]]
