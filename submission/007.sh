@@ -1,33 +1,21 @@
 # Only one single output remains unspent from block 123,321. What address was it sent to?
 
+hash=$(bitcoin-cli getblockhash 123321)
+bloco=$(bitcoin-cli getblock $hash | jq -r '.tx[]')
 
-blockh=123321
+for txid in $bloco; do
 
-# hash do bloco
-block_hash=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblockhash $blockh)
+  tx=$(bitcoin-cli getrawtransaction $txid true)
+  vout_count=$(echo "$tx" | jq '.vout | length')
 
-bloco=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock $block_hash | jq -r 'tx[]')
+  for (( i=0; i<$vout_count; i++ )); do
+    address=$(bitcoin-cli gettxout $txid $i)
 
-# todas as transações do bloco
-for txid in $bloco 
-do
+    if [[ ! -z "$address" ]]; then
+      echo $address | jq -r '.scriptPubKey.address'
+      exit 0
+    fi
 
-    tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
-    vcont=$(echo "$tx" | jq '.vout | length')
+  done
 
-    for (( i=0; i<$vcont; i++ ))
-    do
-        txout=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 gettxout $txid $i)
-
-        # Se txout  (not null), então unspent output
-        if [[ ! -z "$txout" ]]
-        then
-            # the address
-            address=$(echo $txout | jq -r '.scriptPubKey.addresses')
-
-            echo $address
-            break 2  # Break both loops as we found the unspent output
-        fi
-    done
 done
-
