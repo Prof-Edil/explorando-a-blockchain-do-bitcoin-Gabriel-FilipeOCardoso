@@ -5,15 +5,15 @@ bloco=$(bitcoin-cli getblock $hash | jq -r '.tx[]')
 
 for txid in $bloco; do
 
-  tx=$(bitcoin-cli getrawtransaction $txid true)
-  vout_count=$(echo "$tx" | jq '.vout | length')
+  txsaida=$(bitcoin-cli getrawtransaction $txid true)
+  vc=$(echo "$txsaida" | jq '.vout | length')
 
-  for (( i=0; i<$vout_count; i++ )); do
+  for (( i=0; i<$vc; i++ )); do
     address=$(bitcoin-cli gettxout $txid $i)
 
     if [[ ! -z "$address" ]]; then
       echo $address | jq -r '.scriptPubKey.address'
-      exit 0
+      break 2
     fi
 
   done
