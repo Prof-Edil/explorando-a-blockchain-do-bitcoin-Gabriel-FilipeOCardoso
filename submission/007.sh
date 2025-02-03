@@ -6,10 +6,10 @@ blockh=123321
 # hash do bloco
 block_hash=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblockhash $blockh)
 
-bloco=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock $block_hash)
+bloco=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getblock $block_hash | jq -r 'tx[]')
 
 # todas as transações do bloco
-for txid in $(echo $bloco | jq -r '.tx[]') 
+for txid in $bloco 
 do
 
     tx=$(bitcoin-cli -rpcconnect=84.247.182.145:8332 -rpcuser=user_225 -rpcpassword=V4elTiWX5gf6 getrawtransaction "$txid" true)
@@ -25,7 +25,7 @@ do
             # the address
             address=$(echo $txout | jq -r '.scriptPubKey.addresses')
 
-            echo "Address: $address"
+            echo $address
             break 2  # Break both loops as we found the unspent output
         fi
     done
